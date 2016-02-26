@@ -27,3 +27,24 @@
 
 (defgroup local-conf nil
   "Local Conf.")
+
+(defcustom local-conf-files
+  '(".el" ".conf.el" ".conf.emacs" ".conf.spacemacs")
+  "List of possible dir local configuration files, order matters"
+  )
+
+
+
+;;; Code for debug:
+
+(defvar -local-conf-debug t)
+
+(defun local-conf/-debug-message (msg)
+  (progn
+    (if (equal -local-conf-debug t)
+        (message msg)
+      )
+    )
+  )
+
+(provide 'local-conf)
