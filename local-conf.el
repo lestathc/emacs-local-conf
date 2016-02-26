@@ -34,12 +34,11 @@
   )
 
 
-
 ;;; Code for debug:
 
 (defvar -local-conf-debug t)
 
-(defun local-conf/-debug-message (msg)
+(defun local-conf--debug-message (msg)
   (progn
     (if (equal -local-conf-debug t)
         (message msg)
