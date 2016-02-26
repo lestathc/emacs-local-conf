@@ -42,12 +42,72 @@
   t
   "Whether load same config file only once.")
 
+(defun local-conf--find-conf-from-dir (dirname)
+  (local-conf--debug-message
+   (concat "Try to find configuration under: " dirname))
+  (let ((tmplist local-conf-files)
+        (found nil))
+    (progn
+      (while (and (car tmplist)
+                  (not found))
+        (let ((conffile (concat dirname (car tmplist))))
+          (progn
+            (local-conf--debug-message (concat "Check file: " conffile))
+            (if (file-readable-p conffile)
+                (setq found conffile))
+            )
+          )
+        (setq tmplist (cdr tmplist))
+        )
+      (if found
+          (progn
+            (local-conf--debug-message (concat "Found file: " found))
+            found
+            )
+        (progn
+          (local-conf--debug-message "Try to find in parent folder")
+          (if (and local-conf-load-parent
+                   (not (equal dirname "/")))
+              (local-conf--find-conf-from-dir (file-name-directory (directory-file-name dirname)))
+            )
+          )
+        )
+      )
+    )
+  )
+
+(defun local-conf--find-conf-from-file (filename)
+  (local-conf--find-conf-from-dir (file-name-directory filename))
+  )
+
+(defun local-conf-open-local-conf-for-file (filename)
+  "Open the local conf file for given file name."
+  (interactive "fOpen local conf for:")
+  (if filename
+      (let ((conffile (local-conf--find-conf-from-file filename)))
+        (if conffile
+            (find-file conffile)
+          (message "Unable to find any conf file.")
+          )
+        )
+    )
+  )
+
+(defun local-conf-open-buffer-local-conf (ignore)
+  "Open the local conf file for current buffer."
+  (interactive "i")
+  (local-conf-open-local-conf-for-file buffer-file-name)
+  )
+
+;; (setq -local-conf-debug t)
+;; (local-conf--find-conf-from-file buffer-file-name)
+
 ;; >>>>>>>> Debug <<<<<<<<
 
-(defvar -local-conf-debug t)
+(defvar -local-conf-debug nil)
 
 (defun local-conf--debug-message (msg)
-  (if (equal -local-conf-debug t)
+  (if -local-conf-debug
       (message msg)
     )
   )

@@ -3,3 +3,6 @@
 
 # Packaging
 .cask
+
+# Local conf testing file
+.conf.el
