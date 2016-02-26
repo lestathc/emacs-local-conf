@@ -76,6 +76,10 @@
     )
   )
 
+(defun local-conf--load-file (file)
+  (load file)
+  )
+
 (defun local-conf--find-conf-from-file (filename)
   (local-conf--find-conf-from-dir (file-name-directory filename))
   )
@@ -87,7 +91,7 @@
       (let ((conffile (local-conf--find-conf-from-file filename)))
         (if conffile
             (find-file conffile)
-          (message "Unable to find any conf file.")
+          (message "Unable to find any local conf file.")
           )
         )
     )
@@ -99,8 +103,39 @@
   (local-conf-open-local-conf-for-file buffer-file-name)
   )
 
-;; (setq -local-conf-debug t)
-;; (local-conf--find-conf-from-file buffer-file-name)
+(defun local-conf-load-local-conf-for-file (filename)
+  "Load the local conf file for given file name."
+  (interactive "fLoad local conf for:")
+  (if filename
+      (let ((conffile (local-conf--find-conf-from-file filename)))
+        (if conffile
+            (local-conf--load-file conffile)
+          (message "Unable to load any local conf file.")
+          )
+        )
+    )
+  )
+
+(defun local-conf-load-buffer-local-conf (ignore)
+  "Load the local conf file for current buffer."
+  (interactive "i")
+  (local-conf-load-local-conf-for-file buffer-file-name)
+  )
+
+(defun local-conf--load-buffer-local-conf ()
+  (let ((conffile (local-conf--find-conf-from-file buffer-file-name)))
+    (if conffile
+        (local-conf--load-file conffile)
+        )
+    )
+  )
+
+;;;###autoload
+(defun local-conf--initialize ()
+  (add-hook 'find-file-hook
+            'local-conf--load-buffer-local-conf)
+  )
+
 
 ;; >>>>>>>> Debug <<<<<<<<
 
