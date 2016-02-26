@@ -25,7 +25,8 @@
 
 ;;; Code:
 
-(defgroup local-conf nil
+(defgroup local-conf
+  nil
   "Local Conf.")
 
 (defcustom local-conf-files
@@ -33,16 +34,21 @@
   "List of possible dir local configuration files, order matters"
   )
 
+(defcustom local-conf-load-parent
+  nil
+  "Whether load the parent config if no any local configuration found.")
 
-;;; Code for debug:
+(defcustom local-conf-load-once
+  t
+  "Whether load same config file only once.")
+
+;; >>>>>>>> Debug <<<<<<<<
 
 (defvar -local-conf-debug t)
 
 (defun local-conf--debug-message (msg)
-  (progn
-    (if (equal -local-conf-debug t)
-        (message msg)
-      )
+  (if (equal -local-conf-debug t)
+      (message msg)
     )
   )
 
